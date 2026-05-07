@@ -1,0 +1,11 @@
+# pi runtime files (created at runtime, not committed)
+.prayer-times-cache.json
+prayer-times-config.json
+prayer-times-adzan.lock
+
+# Dependencies
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db

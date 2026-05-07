@@ -6,10 +6,28 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/pi-prayer-times"
+    "url": "https://github.com/muhsalaa/pi-prayer-times"
   },
-  "keywords": ["pi", "pi-extension", "islam", "prayer", "adzan", "salah"],
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "islam",
+    "prayer",
+    "adzan",
+    "salah",
+    "prayer-times"
+  ],
   "pi": {
     "extensions": ["./index.ts"]
+  },
+  "files": [
+    "index.ts",
+    "lib.ts",
+    "adzan.mp3",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "@mariozechner/pi-coding-agent": "*",
+    "@mariozechner/pi-tui": "*"
   }
 }
