@@ -1,6 +1,6 @@
 {
   "name": "pi-prayer-times",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Islamic prayer time reminders with adzan for pi coding agent",
   "author": "Salma",
   "license": "MIT",
@@ -18,7 +18,9 @@
     "prayer-times"
   ],
   "pi": {
-    "extensions": ["./index.ts"]
+    "extensions": [
+      "./index.ts"
+    ]
   },
   "files": [
     "index.ts",

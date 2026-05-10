@@ -33,8 +33,6 @@ const CONFIG_PATH = path.join(os.homedir(), ".pi", "prayer-times-config.json");
 const ADZAN_LOCK_PATH = path.join(os.homedir(), ".pi", "prayer-times-adzan.lock");
 const UPDATE_INTERVAL_MS = 30_000;
 const FETCH_TIMEOUT_MS = 10_000;
-const ADZAN_LOCK_WINDOW_MS = 5_000;
-
 interface Config {
   country: string;
   city: string;
@@ -148,19 +146,22 @@ function playAdzan(filePath: string): void {
   });
 }
 
-/** Atomic lock: only one pi instance plays adzan per prayer */
+/** Atomic lock: only one pi instance plays adzan per prayer per day */
 function tryAcquireAdzanLock(prayer: string): boolean {
+  const date = todayStr();
   try {
     fs.mkdirSync(path.dirname(ADZAN_LOCK_PATH), { recursive: true });
-    fs.writeFileSync(ADZAN_LOCK_PATH, JSON.stringify({ prayer, ts: Date.now() }), { flag: "wx" });
+    fs.writeFileSync(ADZAN_LOCK_PATH, JSON.stringify({ prayer, date, ts: Date.now() }), { flag: "wx" });
     return true;
   } catch (err: any) {
     if (err.code !== "EEXIST") return true;
     try {
       const lock = JSON.parse(fs.readFileSync(ADZAN_LOCK_PATH, "utf-8"));
-      if (lock.prayer === prayer && (Date.now() - lock.ts) < ADZAN_LOCK_WINDOW_MS) return false;
+      // Same prayer on same day → already played by another instance
+      if (lock.prayer === prayer && lock.date === date) return false;
+      // Different prayer or new day → take over the lock
       fs.unlinkSync(ADZAN_LOCK_PATH);
-      fs.writeFileSync(ADZAN_LOCK_PATH, JSON.stringify({ prayer, ts: Date.now() }), { flag: "wx" });
+      fs.writeFileSync(ADZAN_LOCK_PATH, JSON.stringify({ prayer, date, ts: Date.now() }), { flag: "wx" });
       return true;
     } catch { return true; }
   }
@@ -246,14 +247,14 @@ export default function (pi: ExtensionAPI) {
       try {
         const fresh = await fetchPrayerTimings(loc, method);
         timings = fresh; staleWarning = false; cacheDate = todayStr(); adzanPlayedToday = [];
-        saveCache({ date: todayStr(), timings: fresh, fetchedAt: Date.now() });
+        saveCache({ date: todayStr(), timings: fresh, fetchedAt: Date.now(), adzanPlayed: [] });
       } catch { /* keep stale */ }
       return;
     }
     try {
       const fresh = await fetchPrayerTimings(loc, method);
       timings = fresh; cacheDate = todayStr(); adzanPlayedToday = [];
-      saveCache({ date: todayStr(), timings: fresh, fetchedAt: Date.now() });
+      saveCache({ date: todayStr(), timings: fresh, fetchedAt: Date.now(), adzanPlayed: [] });
     } catch (err: any) {
       error = err.name === "AbortError" ? "Request timed out" : "Cannot fetch prayer times";
     }
