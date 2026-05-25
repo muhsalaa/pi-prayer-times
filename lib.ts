@@ -6,14 +6,7 @@
 export const PRAYER_NAMES = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"] as const;
 export type PrayerName = (typeof PRAYER_NAMES)[number];
 
-export const COUNTRY_METHOD: Record<string, number> = {
-  indonesia: 20, malaysia: 17, singapore: 11, brunei: 17,
-  "saudi arabia": 4, uae: 4, qatar: 4, kuwait: 4, bahrain: 4, oman: 4,
-  usa: 2, "united states": 2, canada: 2,
-  uk: 15, "united kingdom": 15, france: 12, turkey: 13, egypt: 5,
-  pakistan: 1, bangladesh: 1, india: 1, iran: 7,
-  germany: 3, australia: 3, japan: 3, "south korea": 3,
-};
+
 
 const MAX_STALE_DAYS = 2;
 
@@ -46,11 +39,7 @@ export function todayStr(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-/** Country → calculation method. Returns 3 (MWL) for unknown countries. */
-export function getMethod(country: string, flagOverride?: number): number {
-  if (flagOverride !== undefined) return flagOverride;
-  return COUNTRY_METHOD[country.toLowerCase().trim()] ?? 3;
-}
+
 
 export interface CacheEntry {
   date: string;

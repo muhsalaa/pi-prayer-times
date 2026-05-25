@@ -19,13 +19,13 @@ Islamic prayer time reminders for [pi coding agent](https://github.com/badlogic/
 ## Install
 
 ```bash
-pi install git:github.com/yourusername/pi-prayer-times
+pi install git:github.com/muhsalaa/pi-prayer-times
 ```
 
 Or clone manually:
 
 ```bash
-git clone https://github.com/yourusername/pi-prayer-times ~/.pi/agent/extensions/pi-prayer-times
+git clone https://github.com/muhsalaa/pi-prayer-times ~/.pi/agent/extensions/pi-prayer-times
 ```
 
 Restart pi — the extension auto-loads.
@@ -54,9 +54,6 @@ After setup, the widget appears below the editor and stays there.
 All optional — set in `~/.pi/agent/settings.json` or via CLI:
 
 ```
---prayer-city <city>          City (overrides saved config)
---prayer-country <country>    Country (overrides saved config)
---prayer-method <number>      Calculation method override (auto-detected by country)
 --prayer-window <minutes>     Minutes to show "prayer time" after adzan (default: 15)
 --adzan-path <path>           Custom adzan.mp3 (default: bundled)
 ```
@@ -64,7 +61,7 @@ All optional — set in `~/.pi/agent/settings.json` or via CLI:
 Example:
 
 ```bash
-pi --prayer-city "Surabaya" --prayer-country "Indonesia"
+pi --prayer-window 10 --adzan-path ~/Music/my-adzan.mp3
 ```
 
 Or persist in `~/.pi/agent/settings.json`:
@@ -72,15 +69,26 @@ Or persist in `~/.pi/agent/settings.json`:
 ```json
 {
   "flags": {
-    "prayer-city": "Surabaya",
-    "prayer-country": "Indonesia"
+    "prayer-window": 10,
+    "adzan-path": "/home/user/Music/my-adzan.mp3"
   }
 }
 ```
 
-## Country → Calculation Method
+## Adapters
 
-The extension auto-detects the correct method based on your country:
+The extension probes available prayer time APIs and uses the best one:
+
+| Adapter | Coverage | Features |
+|---------|----------|----------|
+| Aladhan.com | Global | Coordinates, country-aware method selection |
+| MyQuran | Indonesia only | Kemenag RI calculation |
+
+Location config is saved to `~/.pi/prayer-times-config.json`. Setup via `/prayer-times:init`.
+
+## Country → Calculation Method (Aladhan adapter)
+
+When using Aladhan, the extension auto-selects the correct method based on your country:
 
 | Country | Method |
 |---------|--------|
@@ -97,12 +105,10 @@ The extension auto-detects the correct method based on your country:
 | Iran | 7 (Tehran) |
 | Other | 3 (Muslim World League) |
 
-Override with `--prayer-method`.
-
 ## How It Works
 
 1. **Location** — IP geolocation (`ip-api.com`) or manual entry → saved to `~/.pi/prayer-times-config.json`
-2. **Prayer times** — fetched from [Aladhan API](https://aladhan.com) (coordinates when available, city-name fallback)
+2. **Prayer times** — fetched from Aladhan.com (global, coords-aware) or MyQuran (Indonesia), with automatic failover
 3. **Cache** — stored in `~/.pi/prayer-times-cache.json`, valid 1 day, stale up to 2 days
 4. **Widget** — updates every 30 seconds, shows countdown or "prayer time" status
 5. **Adzan** — atomic file lock ensures only one pi instance plays per prayer

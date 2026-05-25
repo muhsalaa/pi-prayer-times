@@ -9,7 +9,6 @@ import {
   msUntil,
   formatCountdown,
   todayStr,
-  getMethod,
   cacheStatus,
   midnightPassedSince,
   findNext,
@@ -103,46 +102,6 @@ describe("todayStr", () => {
     const now = new Date();
     const expected = now.toISOString().slice(0, 10);
     expect(todayStr()).toBe(expected);
-  });
-});
-
-// ── getMethod ────────────────────────────────────────────────────────────────
-
-describe("getMethod", () => {
-  it("returns 20 for Indonesia", () => {
-    expect(getMethod("Indonesia")).toBe(20);
-    expect(getMethod("indonesia")).toBe(20);
-    expect(getMethod("  Indonesia  ")).toBe(20);
-  });
-
-  it("returns 2 for USA", () => {
-    expect(getMethod("USA")).toBe(2);
-    expect(getMethod("United States")).toBe(2);
-  });
-
-  it("returns 3 (MWL) for unknown country", () => {
-    expect(getMethod("Atlantis")).toBe(3);
-  });
-
-  it("honors flag override", () => {
-    expect(getMethod("Indonesia", 4)).toBe(4); // override Kemenag with Umm Al-Qura
-  });
-
-  it("returns flag override even for unknown country", () => {
-    expect(getMethod("Atlantis", 99)).toBe(99);
-  });
-
-  it("covers all major countries", () => {
-    expect(getMethod("Malaysia")).toBe(17);
-    expect(getMethod("Singapore")).toBe(11);
-    expect(getMethod("Saudi Arabia")).toBe(4);
-    expect(getMethod("UK")).toBe(15);
-    expect(getMethod("France")).toBe(12);
-    expect(getMethod("Turkey")).toBe(13);
-    expect(getMethod("Egypt")).toBe(5);
-    expect(getMethod("Pakistan")).toBe(1);
-    expect(getMethod("Iran")).toBe(7);
-    expect(getMethod("Germany")).toBe(3);
   });
 });
 
