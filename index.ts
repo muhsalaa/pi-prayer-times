@@ -5,7 +5,7 @@
  * See README.md for full documentation.
  */
 
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { visibleWidth, truncateToWidth } from "@earendil-works/pi-tui";
 import { exec } from "node:child_process";
 import * as fs from "node:fs";
